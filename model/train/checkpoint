@@ -1,0 +1,6 @@
+model_checkpoint_path: "conv.ckpt-5300"
+all_model_checkpoint_paths: "conv.ckpt-4900"
+all_model_checkpoint_paths: "conv.ckpt-5000"
+all_model_checkpoint_paths: "conv.ckpt-5100"
+all_model_checkpoint_paths: "conv.ckpt-5200"
+all_model_checkpoint_paths: "conv.ckpt-5300"

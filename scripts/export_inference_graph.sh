@@ -1,0 +1,1 @@
+python export_inference_graph.py --input_type image_tensor --pipeline_config_path ../model/faster_rcnn_resnet50_coco.config --trained_checkpoint_prefix ../model/train1/conv.ckpt-18000 --output_directory ../model/fine_tuned_model

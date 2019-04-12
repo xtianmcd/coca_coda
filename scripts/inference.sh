@@ -1,0 +1,1 @@
+python -m infer_detections --input_tfrecord_paths=../data/tfrecords/coco_testdev.record --output_tfrecord_path=../data/inference --inference_graph=../model/fine_tuned_model/frozen_inference_graph.pb --discard_image_pixels
