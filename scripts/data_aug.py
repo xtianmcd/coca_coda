@@ -10,6 +10,9 @@ import PIL
 from PIL import Image
 from scipy.ndimage import zoom
 import json
+from PIL import Image
+import requests
+from io import BytesIO
 
 def resize(ims,labels):
     resized=[]
@@ -182,11 +185,14 @@ if __name__=="__main__":
             dataset.extend(class_ims)
     dataset=np.array(dataset)
 
-
-
     labels = pd.read_csv('../data/labelboxout/orig_labeled.csv')
     boxes = [ast.literal_eval(labels.loc[im,'Label'])['coke_bottle'][0]['geometry'] for im in range(dataset.shape[0]) if labels.loc[im,'Label']!="Skip"]
     boxes.extend(['Skip' for im in range(dataset.shape[0]) if labels.loc[im,'Label']=='Skip'])
+
+    masks = []
+    with open('../data/labelboxout/orig_masks.json','r') as m:
+        mj = json.load(m)
+    masks = [np.array(Image.open(BytesIO(request.get(im['Masks']).content)))]
 
     resized,rszlabs = resize(dataset,boxes)
 

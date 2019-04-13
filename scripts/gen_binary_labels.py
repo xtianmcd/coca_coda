@@ -4,6 +4,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Sequential
+import numpy as np
+import imageio
 
 base_dir = '/Volumes/ElementsExternal/coca_coda'
 
@@ -38,8 +40,63 @@ validation_generator = validation_datagen.flow_from_directory(
 
 IMG_SHAPE = (image_size, image_size, 3)
 
-base_model = tf.keras.applications.ResNet50(input_shape=IMG_SHAPE,
-                                                include_top=True,
+train=[]
+for i in os.listdir('/Volumes/ElementsExternal/coca_coda/train/ims/coke/'):
+    if i.endswith('png'):
+        train.append(['/Volumes/ElementsExternal/coca_coda/train/ims/coke/'+i,1])
+for i in os.listdir('/Volumes/ElementsExternal/coca_coda/train/ims/not_coke/'):
+    if i.endswith('png'):
+        train.append(['/Volumes/ElementsExternal/coca_coda/train/ims/not_coke/'+i,0])
+np.random.shuffle(train)
+
+val=[]
+for i in os.listdir('/Volumes/ElementsExternal/coca_coda/validation/ims/coke/'):
+    if i.endswith('png'):
+        val.append(['/Volumes/ElementsExternal/coca_coda/validation/ims/coke/'+i,1])
+for i in os.listdir('/Volumes/ElementsExternal/coca_coda/validation/ims/not_coke/'):
+    if i.endswith('png'):
+        val.append(['/Volumes/ElementsExternal/coca_coda/validation/ims/not_coke/'+i,0])
+np.random.shuffle(val)
+
+trn_ims = np.array([np.array(imageio.imread(im[0])) for im in train])
+trn_lab = [im[1] for im in train]
+
+val_ims = np.array([np.array(imageio.imread(im[0])) for im in val])
+val_lab = [im[1] for im in val]
+
+np.save('trn_arri',trn_ims)
+np.save('trn_arrl',trn_lab)
+np.save('val_arri',val_ims)
+np.save('val_arrl',val_lab)
+# with open('trn_arr.txt','w') as t:
+#     t.write(str(trn_ims))
+#     t.wwrite(str(trn_lab))
+#     # trn_ims=t[0].readline()
+#     # trn.lab=t[1].readline()
+#
+# with open('val_arr.txt','w') as v:
+#     v.write(str(val_ims))
+#     v.write(str(val_lab))
+#     # val_ims=v[0].readline()
+#     # val.lab=v[1].readline()
+
+ts=list(set([im.shape for im in trn_ims]))
+vs=list(set([im.shape for im in val_ims]))
+
+trn_ims1 = np.array([im for im in trn_ims if im.shape==ts[0]])
+trn_ims2 = np.array([im for im in trn_ims if im.shape==ts[1]])
+trn_ims3 = np.array([im for im in trn_ims if im.shape==ts[2]])
+trn_ims4 = np.array([im for im in trn_ims if im.shape==ts[3]])
+print(len(trn_ims1),len(trn_ims2),len(trn_ims3),len(trn_ims4))
+
+val_ims1 = np.array([im for im in val_ims if im.shape==vs[0]])
+val_ims2 = np.array([im for im in val_ims if im.shape==vs[1]])
+val_ims3 = np.array([im for im in val_ims if im.shape==vs[2]])
+val_ims4 = np.array([im for im in val_ims if im.shape==vs[3]])
+print(len(val_ims1),len(val_ims2),len(val_ims3),len(val_ims4))
+
+base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
+                                                include_top=False,
                                                 weights='imagenet')
 
 base_model.trainable=False
@@ -61,24 +118,29 @@ model.summary()
 
 len(model.trainable_variables)
 
-epochs=5
-steps_per_epoch = train_generator.n
-validation_steps = validation_generator.n
+epochs=3
+# steps_per_epoch = train_generator.n
+# validation_steps = validation_generator.n
 
-history = model.fit_generator(train_generator,
-                              steps_per_epoch = steps_per_epoch,
+# history = model.fit_generator(train_generator,
+#                               steps_per_epoch = steps_per_epoch,
+#                               epochs=epochs,
+#                               workers=4,
+#                               validation_data=validation_generator,
+#                               validation_steps=validation_steps)
+history = model.fit(trn_ims,trn_lab,
+                              batch_size=100,
                               epochs=epochs,
                               workers=4,
-                              validation_data=validation_generator,
-                              validation_steps=validation_steps)
+                              validation_data=(val_ims,val_lab))
 acc = history.history['acc']
 val_acc = history.history['val_acc']
 
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 
-model.save_weights('resnet50_weights.h5')
-model.save('resnet50_model.h5')
+model.save_weights('mnv2_wts.h5')
+model.save('mnv2_model.h5')
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
@@ -96,4 +158,5 @@ plt.legend(loc='upper right')
 plt.ylabel('Cross Entropy')
 plt.ylim([0,max(plt.ylim())])
 plt.title('Training and Validation Loss')
-plt.imsave('training.png')
+plt.imshow()
+plt.imsave('training.png',plt.figure)

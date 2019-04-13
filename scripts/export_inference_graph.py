@@ -140,10 +140,11 @@ def main(_):
   else:
     input_shape = None
   # print(input_shape)
-  exporter.export_inference_graph(
-      FLAGS.input_type, pipeline_config, FLAGS.trained_checkpoint_prefix,
-      FLAGS.output_directory, input_shape=input_shape,
-      write_inference_graph=FLAGS.write_inference_graph)
+  # variable_list = tf.global_variables()
+  # exporter.export_inference_graph(
+  #     FLAGS.input_type, pipeline_config, FLAGS.trained_checkpoint_prefix,
+  #     FLAGS.output_directory, input_shape=input_shape,
+  #     write_inference_graph=FLAGS.write_inference_graph)
 
 
 if __name__ == '__main__':
