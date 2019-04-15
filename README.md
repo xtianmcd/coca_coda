@@ -1,5 +1,5 @@
 # coca_coda Inference Application
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/xtianmcd/coca_coda/master?filepath=https%3A%2F%2Fgithub.com%2Fxtianmcd%2Fcoca_coda%2Fblob%2Fmaster%2Fcoca_coda_inference.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/xtianmcd/coca_coda.git/master?filepath=coca_coda_inference.ipynb)
 
 I chose to use a deep learning model for this project for several reasons: 
 
